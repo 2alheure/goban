@@ -20,9 +20,30 @@ onMounted(() => {
   }
 });
 
+const hasStone = (x, y) => map.value[x][y] !== undefined;
+const hasKo = (x, y) => isKo && isKo.x == x && isKo.y == y;
+const voisins = (x, y) => {
+  var array = [];
+  if (map.value[x + 1][y] === map.value[x][y]) array.push({ x: x + 1, y: y });
+  if (map.value[x][y] === map.value[x][y]) array.push({ x: x, y: y });
+  if (map.value[x][y + 1] === map.value[x][y]) array.push({ x: x, y: y + 1 });
+  if (map.value[x + 1][y + 1] === map.value[x][y]) array.push({ x: x + 1, y: y + 1 });
+
+  return array;
+};
+const libertes = (x, y) => {
+  var array = [];
+  if (map.value[x + 1][y] === undefined) array.push({ x: x + 1, y: y });
+  if (map.value[x][y] === undefined) array.push({ x: x, y: y });
+  if (map.value[x][y + 1] === undefined) array.push({ x: x, y: y + 1 });
+  if (map.value[x + 1][y + 1] === undefined) array.push({ x: x + 1, y: y + 1 });
+
+  return array;
+};
+
 const play = (x, y) => {
-  if (map.value[x][y] !== undefined || (isKo && isKo.x == x && isKo.y == y)) return;
-  console.log('play', x, y);
+  if (hasStone(x, y) || hasKo(x, y)) return;
+  console.log("play", x, y);
 
   map.value[x][y] = whiteTurn.value;
   whiteTurn.value = !whiteTurn.value;
@@ -42,7 +63,7 @@ const play = (x, y) => {
           bas: x == size,
           droite: y == size,
           gauche: y == 1,
-          ko: isKo && isKo.x == x && isKo.y == y,
+          ko: hasKo(x, y),
           blanc: map[x][y] !== undefined && map[x][y] === true,
           noir: map[x][y] !== undefined && map[x][y] === false,
         }"
